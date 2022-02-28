@@ -1,4 +1,4 @@
-import os
+import os,logging
 
 from flask import render_template, flash, redirect, url_for, request, Response
 from flask_login import current_user, login_user, logout_user, login_required
@@ -9,6 +9,8 @@ from app.forms import LoginForm, RegistrationForm
 from app.frames import gen_frames
 from app.models import User
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 @app.route('/')
 @app.route('/index')
@@ -71,22 +73,26 @@ def video_feed():
 @app.route('/cam2left')
 def cam2left():
     os.system('pyezviz -u lucas.saban@ensae.fr -p lla30360_ camera --serial G81454628 move --direction left --speed 1')
+    logging.info('Turned Left')
     return 'nothing'
 
 
 @app.route('/cam2right')
 def cam2right():
     os.system('pyezviz -u lucas.saban@ensae.fr -p lla30360_ camera --serial G81454628 move --direction right --speed 1')
+    logging.info('Turned Right')
     return 'nothing'
 
 
 @app.route('/cam2top')
 def cam2top():
     os.system('pyezviz -u lucas.saban@ensae.fr -p lla30360_ camera --serial G81454628 move --direction up --speed 1')
+    logging.info('Turned Top')
     return 'nothing'
 
 
 @app.route('/cam2bottom')
 def cam2bottom():
     os.system('pyezviz -u lucas.saban@ensae.fr -p lla30360_ camera --serial G81454628 move --direction down --speed 1')
+    logging.info('Turned Bottom')
     return 'nothing'
