@@ -1,3 +1,5 @@
+import os
+
 from flask import render_template, flash, redirect, url_for, request, Response
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -12,23 +14,18 @@ from app.models import User
 @app.route('/index')
 @login_required
 def index():
-    user = {'username': 'Optimus Prime'}
-    return render_template('index2.html', user = user)
+    return render_template('index.html')
+
 
 @app.route('/login', methods=['GET', "POST"])
 def login():
-    print('test')
     if current_user.is_authenticated:
-        print('here')
         return redirect(url_for('index'))
     form = LoginForm()
     if request.method == "POST":
-        print('wtf')
-        print(request.form.get('username'))
         user = User.query.filter_by(username=request.form.get('username')).first()
 
         if user is None or not user.check_password(request.form.get('password')):
-            print('auth error')
             flash('Mot de passe ou login invalide')
             return redirect(url_for('login'))
         login_user(user)
@@ -39,32 +36,57 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
+
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect('index')
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        print('auth')
         return redirect(url_for('index'))
     form = RegistrationForm()
-    if form.validate_on_submit():
-        print('try')
-        user = User(username=form.Username.data, email=form.Email.data)
-        user.set_password(form.Password.data)
+    if request.method == "POST":
+        print('here')
+        user = User(username=request.form.get('username'), email=request.form.get('email'))
+        user.set_password(request.form.get('password'))
         db.session.add(user)
         db.session.commit()
-        flash("Enregistrement de l'utilisateur réussi.")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
 
 @app.route('/live_feed')
 def live_feed():
     return render_template('live_feed.html', title='Live Feed')
 
+
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/cam2left')
+def cam2left():
+    os.system('pyezviz -u lucas.saban@ensae.fr -p lla30360_ camera --serial G81454628 move --direction left --speed 1')
+    return 'nothing'
+
+
+@app.route('/cam2right')
+def cam2right():
+    os.system('pyezviz -u lucas.saban@ensae.fr -p lla30360_ camera --serial G81454628 move --direction right --speed 1')
+    return 'nothing'
+
+
+@app.route('/cam2top')
+def cam2top():
+    os.system('pyezviz -u lucas.saban@ensae.fr -p lla30360_ camera --serial G81454628 move --direction up --speed 1')
+    return 'nothing'
+
+
+@app.route('/cam2bottom')
+def cam2bottom():
+    os.system('pyezviz -u lucas.saban@ensae.fr -p lla30360_ camera --serial G81454628 move --direction down --speed 1')
+    return 'nothing'
