@@ -1,10 +1,12 @@
 import os,logging
 
+from PIL import Image
 from flask import render_template, flash, redirect, url_for, request, Response
 from flask_login import current_user, login_user, logout_user, login_required
+from torchvision import io
 from werkzeug.urls import url_parse
 
-from app import app, db
+from app import app, db, model
 from app.forms import LoginForm, RegistrationForm
 from app.frames import gen_frames
 from app.models import User
@@ -26,7 +28,6 @@ def login():
     form = LoginForm()
     if request.method == "POST":
         user = User.query.filter_by(username=request.form.get('username')).first()
-
         if user is None or not user.check_password(request.form.get('password')):
             flash('Mot de passe ou login invalide')
             return redirect(url_for('login'))
@@ -38,12 +39,10 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
-
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect('index')
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -59,16 +58,14 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
-
 @app.route('/live_feed')
 def live_feed():
-    return render_template('live_feed.html', title='Live Feed')
 
+    return render_template('live_feed.html', title='Live Feed')
 
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 @app.route('/cam2left')
 def cam2left():

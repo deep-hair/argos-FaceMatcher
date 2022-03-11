@@ -1,6 +1,122 @@
 {% extends "fancy_base.html" %}
 
+
+
 {% block content %}
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function () {
+            var dataPoints = [];
+
+            $.get("../counter.txt", function (data) {
+                var allLines = data.split('\n');
+
+                if (allLines.length > 0) {
+                    x = 0
+
+                    for (var i = 0; i < allLines.length; i++) {
+                        var line = allLines[i].split(',')
+                        var time = line[0].split(':')
+                        var x = new Date(time[2],time[1], time[0],time[3],time[4], time[5])
+                        dataPoints.push({x: x, y: parseInt(line[1])});
+                        x += 1
+                    }
+
+
+                }
+
+                settings = {
+			grid: {
+				show: true,
+				aboveData: true,
+				color: "#3f3f3f",
+				labelMargin: 10,
+				axisMargin: 0,
+				borderWidth: 0,
+				borderColor: null,
+				minBorderMargin: 5,
+				clickable: true,
+				hoverable: true,
+				autoHighlight: true,
+				mouseActiveRadius: 100
+			},
+			series: {
+				lines: {
+					show: true,
+					fill: true,
+					lineWidth: 2,
+					steps: false
+				},
+				points: {
+					show: true,
+					radius: 4.5,
+					symbol: "circle",
+					lineWidth: 3.0
+				}
+			},
+			legend: {
+				position: "ne",
+				margin: [0, -25],
+				noColumns: 0,
+				labelBoxBorderColor: null,
+				labelFormatter: function(label, series) {
+					return label + '&nbsp;&nbsp;';
+				},
+				width: 40,
+				height: 1
+			},
+			colors: ['#96CA59', '#3F97EB', '#72c380', '#6f7a8a', '#f7cb38', '#5a8022', '#2c7282'],
+			shadowSize: 0,
+			tooltip: true,
+			tooltipOpts: {
+				xDateFormat: "%H/%M/%S",
+			shifts: {
+				x: -30,
+				y: -50
+			},
+			defaultTheme: false
+			},
+			yaxis: {
+				min: 0
+			},
+			xaxis: {
+				mode: "time",
+				minTickSize: [1, "minute"]}
+		};
+
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    colors: ['#96CA59', '#3F97EB', '#72c380', '#6f7a8a', '#f7cb38', '#5a8022', '#2c7282'],
+                    legend: {
+                                cursor: "pointer",
+                                verticalAlign: "top",
+                                horizontalAlign: "center",
+                                dockInsidePlotArea: true,
+                                },
+                    animationEnabled: true,
+	                theme: "light2",
+                    title: {
+                        text: "Passage dans le salon"
+                    },
+                    data: [{
+                        type: "line",
+                        dataPoints: dataPoints,
+                        xValueFormatString: "HH:mm:ss"
+                    }],
+                    lines: {
+					show: true,
+					fill: true,
+					lineWidth: 2,
+					steps: false
+				}
+                }
+                );
+
+                chart.render();
+
+            });
+        }
+    </script>
     <div class="right_col" role="main">
         <div class="">
             <div class="row tile_count">
@@ -66,9 +182,8 @@
 
                         <div class="x_content">
                             <div>
-                                <div class="demo-container" style="height:280px">
-                                    <div id="chart_plot_02" class="demo-placeholder"></div>
-                                </div>
+                                    <div id="chartContainer"style="height: 300px; width: 100%;"></div>
+
                                 <div class="tiles">
                                     <div class="col-md-4 tile">
                                         <span>Dans l'heure</span>
