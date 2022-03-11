@@ -4,3 +4,8 @@
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/vcs.xml
+.idea/
+__pycache__/
+.vscode/
+.DS_Store
+flask-env/
