@@ -14,7 +14,6 @@ def gen_frames():
     try :
         with open('app/static/counter.txt') as f:
             for line in f:
-                pass
             last_line = line
         n=int(last_line.split(',')[1])
     except:
