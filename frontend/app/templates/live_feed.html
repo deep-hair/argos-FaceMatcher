@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+{% extends "fancy_base.html" %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="row">
+                <div>
+                    <div class="x_panel">
+                        <div class="x_content">
+
+                            <div>
+                                <h3 class="mt-5">Live Streaming</h3>
+                                <img src="{{ url_for('video_feed') }}" width="100%">
+                            </div>
+                            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+                            <script type=text/javascript>
+                                $(function () {
+                                    $('a#left').on('click', function (e) {
+                                        e.preventDefault()
+                                        $.getJSON('/cam2left',
+                                            function (data) {
+                                                //do nothing
+                                            });
+                                        return false;
+                                    });
+                                });
+                                $(function () {
+                                    $('a#right').on('click', function (e) {
+                                        e.preventDefault()
+                                        $.getJSON('/cam2right',
+                                            function (data) {
+                                                //do nothing
+                                            });
+                                        return false;
+                                    });
+                                });
+                                $(function () {
+                                    $('a#up').on('click', function (e) {
+                                        e.preventDefault()
+                                        $.getJSON('/cam2top',
+                                            function (data) {
+                                                //do nothing
+                                            });
+                                        return false;
+                                    });
+                                });
+                                $(function () {
+                                    $('a#down').on('click', function (e) {
+                                        e.preventDefault()
+                                        $.getJSON('/cam2bottom',
+                                            function (data) {
+                                                //do nothing
+                                            });
+                                        return false;
+                                    });
+                                });
+                            </script>
+                            <div class="row tile_count">
+                                <form>
+                                    <div class="col-md-2 col-sm-4 col-xs-10 ">
+                                        <a href=# id=left>
+                                            <button class='btn btn-default'>left</button>
+                                        </a>
+
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6 ">
+                                        <a href=# id=right>
+                                            <button class='btn btn-default'>right</button>
+                                        </a>
+
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6 ">
+                                        <a href=# id=up>
+                                            <button class='btn btn-default'>up</button>
+                                        </a>
+
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6 ">
+                                        <a href=# id=down>
+                                            <button class='btn btn-default'>down</button>
+                                        </a>
+
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6 ">
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
