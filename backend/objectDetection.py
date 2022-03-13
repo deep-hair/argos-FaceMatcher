@@ -6,8 +6,14 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 def format_yolo(source):
+    """
+    Given an image, resize it to the largest dimension and fill the rest with zeros
+    
+    :param source: The image to be transformed
+    :return: a blob from the image.
+    """
 
-    # put the image in square big enough
+
     col, row, _ = source.shape
     _max = max(col, row)
     resized = np.zeros((_max, _max, 3), np.uint8)
@@ -18,6 +24,12 @@ def format_yolo(source):
 class Detector:
 
     def __init__(self, model = '', threshold = 0.4) -> None:
+        """
+        Reads the weights and config file of the model and loads the model
+        
+        :param model: The model to be used
+        :param threshold: This is the confidence threshold
+        """
         absolutePath  = f'/Users/g0bel1n/PycharmProjects/deep-next-web-app/backend/models/yolov4{model}.'
         self.MODEL = cv2.dnn.readNet(f'{absolutePath}weights', f'{absolutePath}cfg')
         self.THRESHOLD = threshold
@@ -27,6 +39,12 @@ class Detector:
 
 
     def evaluate(self, img) -> bool:
+        """
+        Given an image, it will return True if a person is detected in the image, and False otherwise
+        
+        :param img: the image to be classified
+        :return: A boolean value. True if the object is detected, False otherwise.
+        """
 
         formatted_img = format_yolo(img)
         plt.imshow(img)
