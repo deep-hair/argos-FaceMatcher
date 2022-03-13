@@ -15,7 +15,7 @@ import glob
 
 from objectDetection import Detector
 
-
+# Obsolete
 def getSample(camera: cv2.VideoCapture, n_samples = 5) -> list[np.array]:  # type: ignore
     assert camera.isOpened, 'The camera is not active'
     samples = []
@@ -36,25 +36,24 @@ def thresholdMatches(listOfMatch: list[pd.DataFrame], threshold = 0.9, n_require
 class Chair:
     def __init__(self, AREA: list[int], id: int) -> None:
         self.AREA = AREA
-        self.isOccupied = False
-        self.timeSinceLastChanged = time() # Have it in seconds
-        self.timeSinceLastStoreFace = time()
+        self.__isOccupied = False
+        self.__timeSinceLastChanged = time() # Have it in seconds
+        self.__timeSinceLastStoreFace = time()
         self.FACE_STORAGE_FREQUENCY = 0.1
         self.image = np.array
         self.id = id
-        self.customerID = 0
-        self.sampling = False
-        self.samples=[]
-        self.checkId= True
+        self.__customerID = 0
+        self.__sampling = False
+        self.__checkId= True
 
         #os.mkdir(f'sample{self.id}')
     
     def __changeState(self):
-        self.timeSinceLastChanged = time()
-        self.isOccupied =  not self.isOccupied
+        self.__timeSinceLastChanged = time()
+        self.__isOccupied =  not self.__isOccupied
 
     def __newCustomer(self): # potentially
-        self.customerID+=1  
+        self.__customerID+=1  
 
     def __checkNewCustomer(self) -> bool:
         '''
@@ -70,9 +69,7 @@ class Chair:
 
         for imgPath in imgsPathList :
             for sample in samplePathList:
-                print(imgPath, sample)
                 output = DeepFace.verify(img1_path= imgPath,img2_path = sample,model_name='Facenet512',prog_bar=False, enforce_detection=False )
-                print(output)
                 if output['verified']:
                     # if there is match
                     return False
@@ -80,8 +77,8 @@ class Chair:
 
     def __storeFace(self):
         face = DeepFace.detectFace(self.image, target_size = (224, 224), detector_backend = 'retinaface')
-        plt.imsave(fname = f'storedFace/chair_{self.id}_customer_{self.customerID}_{datetime.now().strftime("%H_%M_%S")}.jpg', arr= face)
-        self.timeSinceLastStoreFace = time() - self.timeSinceLastStoreFace
+        plt.imsave(fname = f'storedFace/chair_{self.id}_customer_{self.__customerID}_{datetime.now().strftime("%H_%M_%S")}.jpg', arr= face)
+        self.__timeSinceLastStoreFace = time() - self.__timeSinceLastStoreFace
 
     def __getFace(self):
         face = DeepFace.detectFace(self.image, target_size = (224, 224), detector_backend = 'retinaface')
@@ -91,20 +88,20 @@ class Chair:
 
     def update(self, img, detector:Detector):
         self.image = img[self.AREA[0]:self.AREA[1],self.AREA[2]:self.AREA[3],:]
-        if self.sampling:
+        if self.__sampling:
             print('sampling')
             self.__getFace()
 
-            self.sampling = len(os.listdir(f'sample{self.id}'))<2
+            self.__sampling = len(os.listdir(f'sample{self.id}'))<2
         else:
              # Must be numpy
-            stateChanged = (self.isOccupied != detector.evaluate(img))
-            timeToStore = (self.timeSinceLastStoreFace> 1./self.FACE_STORAGE_FREQUENCY)
+            stateChanged = (self.__isOccupied != detector.evaluate(img))
+            timeToStore = (self.__timeSinceLastStoreFace> 1./self.FACE_STORAGE_FREQUENCY)
             print('state changed', stateChanged)
-            print('is Occupied', self.isOccupied)
+            print('is Occupied', self.__isOccupied)
             print('evaluation', detector.evaluate(img))
-            print('checkID', self.checkId)
-            if not stateChanged and timeToStore and self.isOccupied:
+            print('checkID', self.__checkId)
+            if not stateChanged and timeToStore and self.__isOccupied:
                 # If the seat stays occupied
                 if (
                     len(
@@ -112,7 +109,7 @@ class Chair:
                             el
                             for el in os.listdir('storedFace')
                             if el.startswith(
-                                f'chair_{self.id}_customer_{self.customerID}'
+                                f'chair_{self.id}_customer_{self.__customerID}'
                             )
                         ]
                     )
@@ -121,8 +118,8 @@ class Chair:
                     self.__storeFace()
 
 
-                elif self.checkId:
-                    self.checkId = False
+                elif self.__checkId:
+                    self.__checkId = False
                     if self.__checkNewCustomer() or not [
                         imgPath
                         for imgPath in os.listdir('storedFace')
@@ -136,10 +133,10 @@ class Chair:
 
             elif stateChanged:
                 self.__changeState()
-                if self.isOccupied :
-                    self.sampling = True
+                if self.__isOccupied :
+                    self.__sampling = True
                 else : 
-                    self.checkId = True
+                    self.__checkId = True
                     files = glob.glob(f'sample{self.id}')
                     for f in files:
                         os.remove(f)
