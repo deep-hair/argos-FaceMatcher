@@ -15,6 +15,7 @@ import glob
 
 from objectDetection import Detector
 
+
 # Obsolete
 def getSample(camera: cv2.VideoCapture, n_samples = 5) -> list[np.array]:  # type: ignore
     assert camera.isOpened, 'The camera is not active'
@@ -45,6 +46,8 @@ class Chair:
         self.__customerID = 0
         self.__sampling = False
         self.__checkId= True
+        self.timeLastStore = time()
+        self.timeLastSample = time()
 
         #os.mkdir(f'sample{self.id}')
     
@@ -71,6 +74,8 @@ class Chair:
             for sample in samplePathList:
                 output = DeepFace.verify(img1_path= imgPath,img2_path = sample,model_name='Facenet512',prog_bar=False, enforce_detection=False )
                 if output['verified']:
+                    print(imgPath,sample)
+                    print(False)
                     # if there is match
                     return False
         return True
@@ -78,25 +83,29 @@ class Chair:
     def __storeFace(self):
         face = DeepFace.detectFace(self.image, target_size = (224, 224), detector_backend = 'retinaface')
         plt.imsave(fname = f'storedFace/chair_{self.id}_customer_{self.__customerID}_{datetime.now().strftime("%H_%M_%S")}.jpg', arr= face)
-        self.__timeSinceLastStoreFace = time() - self.__timeSinceLastStoreFace
-
+        self.timeLastStore = time()
+        
     def __getFace(self):
         face = DeepFace.detectFace(self.image, target_size = (224, 224), detector_backend = 'retinaface')
         plt.imsave(fname = f'sample{self.id}/sample_{datetime.now().strftime("%H_%M_%S")}.jpg', arr= face)
-
+        self.timeLastSample = time()
+        
 
 
     def update(self, img, detector:Detector):
         self.image = img[self.AREA[0]:self.AREA[1],self.AREA[2]:self.AREA[3],:]
-        if self.__sampling:
+        if self.__sampling and time()-self.timeLastSample > 10:
             print('sampling')
             self.__getFace()
 
             self.__sampling = len(os.listdir(f'sample{self.id}'))<2
         else:
              # Must be numpy
+            self.__timeSinceLastStoreFace = time() - self.timeLastStore
+
             stateChanged = (self.__isOccupied != detector.evaluate(img))
             timeToStore = (self.__timeSinceLastStoreFace> 1./self.FACE_STORAGE_FREQUENCY)
+            print(self.__timeSinceLastStoreFace)
             print('state changed', stateChanged)
             print('is Occupied', self.__isOccupied)
             print('evaluation', detector.evaluate(img))
@@ -129,14 +138,13 @@ class Chair:
                         print("ADDING A NEW CUSTOMER")
                     else: print("Not a new customer")
 
-
-
             elif stateChanged:
                 self.__changeState()
                 if self.__isOccupied :
                     self.__sampling = True
                 else : 
                     self.__checkId = True
-                    files = glob.glob(f'sample{self.id}')
+                    files = os.listdir(f'sample{self.id}')
                     for f in files:
-                        os.remove(f)
+                        print(f)
+                        os.remove('/'.join([f'sample{self.id}',f]))

@@ -14,7 +14,7 @@ def gen_frames():
     try :
         with open('app/static/counter.txt') as f:
             for line in f:
-            last_line = line
+                last_line = line
         n=int(last_line.split(',')[1])
     except:
         n=0
@@ -26,17 +26,15 @@ def gen_frames():
             prev = time.time()
             if not success:
                 break
-            else:
-                try :
-                    n_new,im = run(img0=frame, view_img=True)
-                    if n_new>n:
-                        counter+=1
-                    file = open('app/static/counter.txt', 'a')
+            try:
+                n_new,im = run(img0=frame, view_img=True)
+                if n_new>n:
+                    counter+=1
+                with open('app/static/counter.txt', 'a') as file:
                     file.writelines("{0},{1}\n".format(time.strftime("%d:%m:%Y:%H:%M:%S", time.localtime()), counter))
-                    file.close()
-                    n= n_new
-                except:
-                    n=0
+                n= n_new
+            except:
+                n=0
 
 if __name__ == '__main__':
     threads = [threading.Thread(target=gen_frames), threading.Thread(target=app.run(host='0.0.0.0', port=5000))]

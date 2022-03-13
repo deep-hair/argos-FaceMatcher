@@ -18,7 +18,7 @@ def format_yolo(source):
 class Detector:
 
     def __init__(self, model = '', threshold = 0.4) -> None:
-        absolutePath  = f'/Users/g0bel1n/PycharmProjects/deep-next-web-app/models/yolov4{model}.'
+        absolutePath  = f'/Users/g0bel1n/PycharmProjects/deep-next-web-app/backend/models/yolov4{model}.'
         self.MODEL = cv2.dnn.readNet(f'{absolutePath}weights', f'{absolutePath}cfg')
         self.THRESHOLD = threshold
         self.CLASSES = []
