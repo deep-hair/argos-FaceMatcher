@@ -95,7 +95,7 @@ class Chair:
             print('sampling')
             self.__getFace()
 
-            self.sampling = len(os.listdir(f'sample{self.id}'))<2 
+            self.sampling = len(os.listdir(f'sample{self.id}'))<2
         else:
              # Must be numpy
             stateChanged = (self.isOccupied != detector.evaluate(img))
@@ -106,19 +106,34 @@ class Chair:
             print('checkID', self.checkId)
             if not stateChanged and timeToStore and self.isOccupied:
                 # If the seat stays occupied
-                if len([el for el in os.listdir(f'storedFace') if el.startswith(f'chair_{self.id}_customer_{self.customerID}')])<2  :
+                if (
+                    len(
+                        [
+                            el
+                            for el in os.listdir('storedFace')
+                            if el.startswith(
+                                f'chair_{self.id}_customer_{self.customerID}'
+                            )
+                        ]
+                    )
+                    < 2
+                ):
                     self.__storeFace()
 
 
-                elif self.checkId :
+                elif self.checkId:
                     self.checkId = False
-                    if self.__checkNewCustomer() or len([imgPath  for imgPath in os.listdir('storedFace') if imgPath.endswith('jpg')])==0:
-                            self.__newCustomer()
-                            print("ADDING A NEW CUSTOMER")
-                    else : print("Not a new customer")
+                    if self.__checkNewCustomer() or not [
+                        imgPath
+                        for imgPath in os.listdir('storedFace')
+                        if imgPath.endswith('jpg')
+                    ]:
+                        self.__newCustomer()
+                        print("ADDING A NEW CUSTOMER")
+                    else: print("Not a new customer")
 
 
-                        
+
             elif stateChanged:
                 self.__changeState()
                 if self.isOccupied :
@@ -128,5 +143,3 @@ class Chair:
                     files = glob.glob(f'sample{self.id}')
                     for f in files:
                         os.remove(f)
-
-            else : pass
