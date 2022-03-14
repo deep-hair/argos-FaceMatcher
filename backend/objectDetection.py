@@ -1,7 +1,6 @@
 import os
 from typing import Any
 import cv2
-from deepface import DeepFace
 from matplotlib import pyplot as plt
 import numpy as np
 
@@ -12,7 +11,6 @@ def format_yolo(source):
     :param source: The image to be transformed
     :return: a blob from the image.
     """
-
 
     col, row, _ = source.shape
     _max = max(col, row)

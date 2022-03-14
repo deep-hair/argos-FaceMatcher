@@ -10,9 +10,6 @@ from deepface import DeepFace
 import pandas as pd
 from datetime import datetime
 import os
-import glob
-
-
 
 from objectDetection import Detector
 
@@ -79,7 +76,8 @@ class Chair:
         """
         Check if there is a new customer by comparing the stored face images with the images in the
         sample folder
-        :return: True if there is no match, False if there is a match
+        :return: a boolean value. If the customer is new, the function returns True. If the customer is
+        not new, the function returns False.
         """
 
         #TODO penser à supprimer les images au bout d'1h30
@@ -147,8 +145,9 @@ class Chair:
         return(not stateChanged and timeToStore and self.__isOccupied and not hasAlreadyStoredEnoughFaces and not self.__checkId, stateChanged)
 
 
-
+    #TODO Clean the shit out of the update func 
     def update(self, img, detector:Detector):
+
         """
         This function is the main function of the Face class. It is called every time a frame is
         captured by the camera
