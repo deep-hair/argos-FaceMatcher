@@ -15,7 +15,7 @@ except : pass
 
 def runDeepHair_FaceMatcher(source: str) -> tuple[int, float]:
     chair = Chair([0,1200,0,1200],1)
-    detector = Detector()
+    #detector = Detector()
 
     cap = cv2.VideoCapture(source)
     fps = cap.get(cv2.CAP_PROP_FPS) # OpenCV2 version 2 used "CV_CAP_PROP_FPS"
@@ -24,11 +24,12 @@ def runDeepHair_FaceMatcher(source: str) -> tuple[int, float]:
     #cap.set(cv2.CAP_PROP_BUFFERSIZE, 3)
     t1 = 0
     # The device number might be 0 or 1 depending on the device and the webcam
-
     while True:
         t0 = time.time()
-        
+        videoTime = int(cap.get(cv2.CAP_PROP_POS_FRAMES))/fps
         ret, frame = cap.read()
+        print(videoTime)
+        
         #print(frame.shape)
         if ret : 
             cv2.imshow('frame', frame)
@@ -37,8 +38,8 @@ def runDeepHair_FaceMatcher(source: str) -> tuple[int, float]:
             t1 = time.time()
             #print(f' affichage {t1-t0}')
             
-            chair.update(frame, detector)
-            print('updated')
+            chair.update(frame, videoTime)
+            #print('updated')
 
             #print(time.time()-t1)
         
