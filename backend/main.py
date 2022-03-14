@@ -7,6 +7,12 @@ from objectDetection import Detector
 try : os.chdir('backend')
 except : pass
 
+#TODO 
+# - Multithread for multiple chairs and constant video flow
+# - improve sampling with subclasses Sample() etc
+# - Make yolov4-tiny work 
+    
+
 def runDeepHair_FaceMatcher(source: str) -> tuple[int, float]:
     chair = Chair([0,1200,0,1200],1)
     detector = Detector()
