@@ -38,7 +38,7 @@ def runDeepHair_FaceMatcher(source: str) -> tuple[int, float]:
             t1 = time.time()
             #print(f' affichage {t1-t0}')
             
-            chair.update(frame, videoTime)
+            #chair.update(frame, videoTime)
             #print('updated')
 
             #print(time.time()-t1)
@@ -53,7 +53,7 @@ def runDeepHair_FaceMatcher(source: str) -> tuple[int, float]:
     return chair._Chair__customerID, duration
 
 if __name__ =='__main__':
-    source = 'output_1.mp4'
+    source = 'hiv00141.mp4'
     start  = time.time()
     numberOfCustomer, duration = runDeepHair_FaceMatcher(source = source )
     print(f'There was {numberOfCustomer} customers in the {source}. It took {time.time()-start} seconds and the video was {duration} seconds long ')

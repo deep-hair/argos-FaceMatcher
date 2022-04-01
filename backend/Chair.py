@@ -76,6 +76,16 @@ class Chair:
 
         return someoneJustLeft, someoneJustSat, someoneIsSitting, enoughSampleToCheck, mustStoreFace
 
+    def __getAreaFromImg(self,img: np.array )-> np.array:
+        """
+        Get the area of the image defined by the AREA tuple
+        
+        :param img: the image to be cropped
+        :type img: np.array
+        :return: The image cropped to the area of interest.
+        """
+        return img[self.AREA[0]:self.AREA[1],self.AREA[2]:self.AREA[3],:]
+
     def deleteSamples(self):
         """
         It deletes all the files in the sample folder.
@@ -140,10 +150,10 @@ class Chair:
         """
         This function is used to reset the variables used to store the last person's information
         """
-            self.idVerified = False
-            self.nbStoredFacesForCurrentCustomer = 0
-            self.nbSamples = 0
-            self.deleteSamples()
+        self.idVerified = False
+        self.nbStoredFacesForCurrentCustomer = 0
+        self.nbSamples = 0
+        self.deleteSamples()
 
     def update(self, img, videoTime):
 
@@ -217,18 +227,7 @@ class Chair:
     #     face = DeepFace.detectFace(self.image, target_size = (224, 224), detector_backend = 'retinaface')
     #     plt.imsave(fname = f'storedFace/chair_{self.id}_customer_{self.__customerID}_{datetime.now().strftime("%H_%M_%S")}.jpg', arr= face)
     #     self.timeLastStore = time()
-        
-
-
-    # def __getAreaFromImg(self,img: np.array )-> np.array:
-    #     """
-    #     Get the area of the image defined by the AREA tuple
-        
-    #     :param img: the image to be cropped
-    #     :type img: np.array
-    #     :return: The image cropped to the area of interest.
-    #     """
-    #     return img[self.AREA[0]:self.AREA[1],self.AREA[2]:self.AREA[3],:]
+    
 
     # def __sample(self):
 
